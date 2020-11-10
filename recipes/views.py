@@ -6,8 +6,18 @@ import json
 
 
 def index(request):
-    recipes_list = Recipe.objects.select_related(
-        'author').all()
+    recipes_list = Recipe.objects.select_related('author').all()
+    tags = [False, False, False]
+    if request.GET.get('breakfast', False):
+        recipes_list = recipes_list.filter(tag__contains=1)
+        tags[0] = True
+    if request.GET.get('lunch', False):
+        recipes_list = recipes_list.filter(tag__contains=2)
+        tags[1] = True
+    if request.GET.get('dinner', False):
+        recipes_list = recipes_list.filter(tag__contains=3)
+        tags[2] = True
+
     paginator = Paginator(recipes_list, 6)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
@@ -18,7 +28,8 @@ def index(request):
             Ingredient.objects.create(title=ingredient['title'], dimension=ingredient['dimension'])
     """
     return render(request, 'index.html', {'page': page,
-                                                 'paginator': paginator})
+                                          'paginator': paginator,
+                                          'tags': tags})
 
 
 def new_recipe(request):
