@@ -1,17 +1,24 @@
 from django.shortcuts import render, redirect
-from .models import Ingredient, Ingredients_in_recipe
+from django.core.paginator import Paginator
+from .models import Ingredient, Ingredients_in_recipe, Recipe
 from .forms import RecipeForm
 import json
 
 
 def index(request):
+    recipes_list = Recipe.objects.select_related(
+        'author').all()
+    paginator = Paginator(recipes_list, 6)
+    page_number = request.GET.get('page', 1)
+    page = paginator.get_page(page_number)
     """
     with open('ingredients.json', 'r') as ingredients:
         ingredients_json = json.load(ingredients)
         for ingredient in ingredients_json:
             Ingredient.objects.create(title=ingredient['title'], dimension=ingredient['dimension'])
     """
-    return render(request, 'indexNotAuth.html')
+    return render(request, 'index.html', {'page': page,
+                                                 'paginator': paginator})
 
 
 def new_recipe(request):
@@ -36,8 +43,10 @@ def new_recipe(request):
                 if ingredient_name == '':
                     break
                 amount = request.POST.get(f'valueIngredient_{i}', 0)
-                ingredient = Ingredient.objects.get(title=ingredient_name)            
-                Ingredients_in_recipe.objects.create(recipe=recipe, ingredient=ingredient, amount=amount)
+                ingredient = Ingredient.objects.get(title=ingredient_name)
+                Ingredients_in_recipe.objects.create(recipe=recipe,
+                                                     ingredient=ingredient,
+                                                     amount=amount)
                 i += 1
             return redirect('index')
         return render(request, 'new_recipe.html', {'form': form})
