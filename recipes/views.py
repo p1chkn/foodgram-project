@@ -1,5 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
 from .models import Ingredient, Ingredients_in_recipe, Recipe
 from .forms import RecipeForm
 import json
@@ -31,6 +32,7 @@ def index(request):
                                           'tags': tags})
 
 
+@login_required
 def new_recipe(request):
     if request.method == 'POST':
         form = RecipeForm(request.POST or None, files=request.FILES or None)
@@ -62,3 +64,11 @@ def new_recipe(request):
         return render(request, 'new_recipe.html', {'form': form})
     form = RecipeForm()
     return render(request, 'new_recipe.html', {'form': form})
+
+
+def recipe_view(request, recipe_id):
+    recipe = get_object_or_404(Recipe, pk=recipe_id)
+    ingredients = Ingredients_in_recipe.objects.filter(
+        recipe=recipe).select_related('ingredient').all()
+    return render(request, 'singlePage.html', {'recipe': recipe,
+                                               'ingredients': ingredients})

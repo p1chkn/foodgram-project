@@ -22,10 +22,6 @@ class Recipe(models.Model):
     title = models.CharField(max_length=200)
     image = models.ImageField(upload_to='recipe_image/')
     description = models.TextField()
-    ingredients = models.ManyToManyField(Ingredient,
-                                         through='Ingredients_in_recipe',
-                                         through_fields=('recipe',
-                                                         'ingredient'))
     tag = MultiSelectField(choices=TAG_CHOICES)
     done_time = models.IntegerField()
 

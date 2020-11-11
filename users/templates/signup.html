@@ -10,21 +10,8 @@
     <title>Регистрация</title>
     <link rel="stylesheet" href="{% static '/pages/form.css' %}">
 </head> 
-<body class="body">
-<header class="header">
-    <nav class="nav">
-        <div class="nav__container container">
-            <ul class="nav__items list">
-                <li class="nav__item nav__item_disabled"><a href="#" class="nav__link link">Рецепты</a></li>
-                <li class="nav__item nav__item_disabled"><a href="#" class="nav__link link">Список покупок</a></li>
-            </ul>
-            <ul class="nav__items list">
-                <li class="nav__item"><a href="#" class="nav__link link">Войти</a></li>
-                <li class="nav__item"><a href="#" class="button button_style_blue">Создать аккаунт</a></li>
-            </ul>
-        </div>
-    </nav>
-</header>
+<body class="body"> 
+{% include 'nav.html' %}
 <main class="main container">
     <div class="main__header">
         <h1 class="main__title">Регистрация</h1>
@@ -42,7 +29,7 @@
                     <span class="form__error">{{ field.errors }}</span>
                     {% endif %}
                     {% if field.help_text %}
-                    <small id="{{ field.id_for_label }}-help" class="form__input-info.">{{ field.help_text }}</small>
+                    <span class="form__input-info">{{ field.help_text }}</span>
                     {% endif %}
                 </div>
             </div>
@@ -57,14 +44,6 @@
 
 
 </main>
-<footer class="footer">
-    <div class="footer__container container">
-        <a href="#" class="footer__brand link">Продуктовый помощник</a>
-        <ul class="footer__items">
-            <li class="footer__item"><a href="#" class="footer__link link">Об авторе </a></li>
-            <li class="footer__item"><a href="#" class="footer__link link">Технологии</a></li>
-        </ul>
-    </div>
-</footer>
+{% include 'footer.html' %}
 </body>
 </html>
