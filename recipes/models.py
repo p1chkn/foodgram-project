@@ -22,7 +22,7 @@ class Recipe(models.Model):
     title = models.CharField(max_length=200)
     image = models.ImageField(upload_to='recipe_image/')
     description = models.TextField()
-    tag = MultiSelectField(choices=TAG_CHOICES)
+    tag = MultiSelectField(choices=TAG_CHOICES, null=True)
     done_time = models.IntegerField()
 
     def __str__(self):
