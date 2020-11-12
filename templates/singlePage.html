@@ -6,21 +6,28 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Французские тосты</title>
+    <title>{{ recipe.title }}</title>
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
     <link rel="stylesheet" href="{% static '/pages/single.css' %}">
 </head>
 <body class="body">
 {% include 'nav.html' with menu=1 %}
     <main class="main container">
-        <div class="single-card" data-id="371" data-author="12">
+        <div class="single-card" data-id="{{ recipe.id }}" data-author="{{ recipe.author.id }}">
             <img src="{{ recipe.image.url }}" alt="какой-то текст" class="single-card__image">
+            {% csrf_token %}
             <div class="single-card__info">
                 <div class="single-card__header-info">
                     <h1 class="single-card__title">{{ recipe.title }}</h1>
                     {% if user.is_authenticated %}
                     <div class="single-card__favorite">
+                        {% if recipe.id in favorites_id %}
+                        <button class="button button_style_none" name="favorites"><span class="icon-favorite icon-favorite_big icon-favorite_active"></span></span></button>
+                        <div class="single-card__favorite-tooltip tooltip">Добавлено в избранное</div>
+                        {% else %}
                         <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite icon-favorite_big"></span></button>
                         <div class="single-card__favorite-tooltip tooltip">Добавить в избранное</div>
+                        {% endif %}
                     </div>
                     {% endif %}
                 </div>
@@ -47,7 +54,13 @@
                     </ul>
                 </div>
                 <ul class="single-card__items">
-                    <li class="single-card__item"><button class="button button_style_blue" name="purchases" data-out><span class="icon-plus"></span> Добавить в покупки</button></li>
+                    <li class="single-card__item">
+                    {% if recipe.id in purchases_id %}
+                    <button class="button button_style_light-blue-outline" name="purchases"><span class="icon-check button__icon"></span> Рецепт добавлен</button>
+                    {% else %}
+                    <button class="button button_style_blue" name="purchases" data-out><span class="icon-plus"></span> Добавить в покупки</button>
+                    {% endif %}
+                    </li>
                     {% if user.is_authenticated %}
                     <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></li>
                     {% endif %}
@@ -68,16 +81,16 @@
         </div>
     </main>
     {% include 'footer.html'     %}
-<script src="{% static 'js/components/Purchases.js' %}"></script>
-<script src="{% static '/js/components/Favorites.js' %}"></script>
-<script src="{% static '/js/components/Subscribe.js' %}"></script>
+<script src="{% static '/js/components/Purchases.js'%}"></script>
+<script src="{% static '/js/components/Favorites.js'%}"></script>
+<script src="{% static '/js/components/Subscribe.js'%}"></script>
+
 <script src="{% static '/js/config/config.js' %}"></script>
+<script src="{% static '/js/components/MainCards.js'%}"></script>
+<script src="{% static '/js/components/SingleCard.js'%}"></script>
+<script src="{% static '/js/components/Header.js'%}"></script>
 
-<script src="{% static '/js/components/MainCards.js' %}"></script>
-<script src="{% static '/js/components/SingleCard.js' %}"></script>
-<script src="{% static '/js/components/Header.js' %}"></script>
-
-<script src="{% static '/js/api/Api.js' %}"></script>
-<script src="{% static 'singlePage.js' %}"></script>
+<script src="{% static '/js/api/Api.js'%}"></script>
+<script src="{% static '/singlePage.js'%}"></script>
 </body>
 </html>

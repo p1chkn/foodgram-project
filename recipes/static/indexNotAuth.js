@@ -13,6 +13,17 @@ const configButton = {
             class: 'button_style_light-blue-outline',
             text: `<span class="icon-check button__icon"></span> Рецепт добавлен`
         }
+    },
+    favorites: {
+        attr: 'data-out',
+        default: {
+            class: ['button', 'button_style_none'],
+            text: '<span class="icon-favorite"></span>'
+        },
+        active: {
+            class: '.icon-favorite_active',
+            text: `<span class="icon-favorite icon-favorite_active"></span>`
+        }
     }
 }
 function addOrUpdateUrlParam(name, value)
@@ -33,9 +44,11 @@ function addOrUpdateUrlParam(name, value)
                         }
                     }
 const purchases = new Purchases(configButton.purchases, api);
+const favorites = new Favorites(configButton.favorites, api);
 
-const cardList = new CardList(container, '.card', header, api, false, {
-    purchases
+const cardList = new CardList(container, '.card', header, api, true, {
+    purchases, 
+    favorites
 });
 
 cardList.addEvent();

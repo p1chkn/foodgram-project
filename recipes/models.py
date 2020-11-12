@@ -46,3 +46,12 @@ class Purchases(models.Model):
 
     def __str__(self):
         return self.user
+
+
+class Favorites(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+                             related_name='favorites')
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user

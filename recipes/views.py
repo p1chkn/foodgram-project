@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
-from .models import Ingredient, Ingredients_in_recipe, Recipe
+from .models import Ingredient, Ingredients_in_recipe, Recipe, Purchases
 from .forms import RecipeForm
 import json
 
@@ -29,7 +29,8 @@ def index(request):
     """
     return render(request, 'index.html', {'page': page,
                                           'paginator': paginator,
-                                          'tags': tags})
+                                          'tags': tags,
+                                          })
 
 
 @login_required
@@ -72,3 +73,11 @@ def recipe_view(request, recipe_id):
         recipe=recipe).select_related('ingredient').all()
     return render(request, 'singlePage.html', {'recipe': recipe,
                                                'ingredients': ingredients})
+
+
+def shoplist_view(request):
+    user = request.user
+    purchases = Purchases.objects.filter(
+        user=user).select_related('recipe').all()
+    recipes = [i.recipe for i in purchases]
+    return render(request, 'shopList.html', {'recipes': recipes})
