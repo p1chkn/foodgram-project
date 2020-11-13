@@ -1,7 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
-from .models import Ingredient, Ingredients_in_recipe, Recipe, Purchases
+from .models import (
+    Ingredient,
+    Ingredients_in_recipe,
+    Recipe,
+    Purchases,
+    Favorites,
+)
 from .forms import RecipeForm
 import json
 
@@ -81,3 +87,27 @@ def shoplist_view(request):
         user=user).select_related('recipe').all()
     recipes = [i.recipe for i in purchases]
     return render(request, 'shopList.html', {'recipes': recipes})
+
+
+def favorites_view(request):
+    favorites = Favorites.objects.filter(
+        user=request.user).select_related('recipe').all()
+    recipes_id_list = [i.recipe.id for i in favorites]
+    recipe_list = Recipe.objects.filter(id__in=recipes_id_list).all()
+    tags = [False, False, False]
+    if request.GET.get('breakfast') == 'True':
+        recipe_list = recipe_list.filter(tag__contains=1)
+        tags[0] = True
+    if request.GET.get('lunch') == 'True':
+        recipe_list = recipe_list.filter(tag__contains=2)
+        tags[1] = True
+    if request.GET.get('dinner') == 'True':
+        recipe_list = recipe_list.filter(tag__contains=3)
+        tags[2] = True
+    paginator = Paginator(recipe_list, 6)
+    page_number = request.GET.get('page', 1)
+    page = paginator.get_page(page_number)
+    return render(request, 'favorites.html', {'page': page,
+                                              'paginator': paginator,
+                                              'tags': tags,
+                                              })
