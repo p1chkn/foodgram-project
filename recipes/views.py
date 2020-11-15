@@ -43,7 +43,6 @@ def index(request):
 def new_recipe(request):
     if request.method == 'POST':
         form = RecipeForm(request.POST or None, files=request.FILES or None)
-        print(request.POST)
         if form.is_valid():
             tags = []
             if 'breakfast' in request.POST:
@@ -82,11 +81,16 @@ def recipe_view(request, recipe_id):
 
 
 def shoplist_view(request):
-    user = request.user
-    purchases = Purchases.objects.filter(
-        user=user).select_related('recipe').all()
-    recipes = [i.recipe for i in purchases]
-    return render(request, 'shopList.html', {'recipes': recipes})
+    if request.user.is_authenticated:
+        user = request.user
+        purchases = Purchases.objects.filter(
+            user=user).select_related('recipe').all()
+        recipes = [i.recipe for i in purchases]
+        return render(request, 'shopList.html', {'recipes': recipes})
+    else:
+        recipes_id = request.session.get('purchases', [])
+        recipes = Recipe.objects.filter(id__in=recipes_id).all()
+        return render(request, 'shopList.html', {'recipes': recipes})
 
 
 def favorites_view(request):

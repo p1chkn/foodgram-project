@@ -5,7 +5,8 @@ def counter(request):
     if request.user.is_authenticated:
         counter = Purchases.objects.filter(user=request.user).count()
     else:
-        counter = 0
+        purchases = request.session.get('purchases', [])
+        counter = len(purchases)
     return {
         'counter': counter
     }
@@ -17,7 +18,7 @@ def purchases_id(request):
             user=request.user).select_related('recipe').all()
         purchases_id = [i.recipe.id for i in purchases]
     else:
-        purchases_id = []
+        purchases_id = request.session.get('purchases', [])
     return {
         'purchases_id': purchases_id
     }
