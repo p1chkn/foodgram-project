@@ -1,4 +1,4 @@
-from recipes.models import Purchases, Favorites
+from recipes.models import Purchases, Favorites, Follow
 
 
 def counter(request):
@@ -33,4 +33,16 @@ def favorites_id(request):
         favorites_id = []
     return {
         'favorites_id': favorites_id
+    }
+
+
+def subscriptions_id(request):
+    if request.user.is_authenticated:
+        follow = Follow.objects.filter(
+            user=request.user).select_related('author').all()
+        subscriptions_id = [i.author.id for i in follow]
+    else:
+        subscriptions_id = []
+    return {
+        'subscriptions_id': subscriptions_id
     }

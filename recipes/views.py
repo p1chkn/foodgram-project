@@ -8,6 +8,7 @@ from .models import (
     Recipe,
     Purchases,
     Favorites,
+    Follow,
 )
 from .forms import RecipeForm
 
@@ -193,9 +194,9 @@ def favorites_view(request):
 
 @login_required
 def user_view(request, user_id):
-    user = get_object_or_404(User, id=user_id)
+    author = get_object_or_404(User, id=user_id)
     recipes_list = Recipe.objects.order_by(
-        '-id').filter(author=user).all()
+        '-id').filter(author=author).all()
     tags = [False, False, False]
     if request.GET.get('breakfast') == 'True':
         recipes_list = recipes_list.filter(tag__contains=1)
@@ -209,12 +210,38 @@ def user_view(request, user_id):
     paginator = Paginator(recipes_list, 6)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
-    username = user.username
     empty = False
     if not recipes_list.count():
         empty = True
-    return render(request, 'index.html', {'page': page,
-                                          'paginator': paginator,
-                                          'tags': tags,
-                                          'username': username,
-                                          'empty': empty})
+    return render(request, 'authorRecipe.html', {'page': page,
+                                                 'paginator': paginator,
+                                                 'tags': tags,
+                                                 'author': author,
+                                                 'empty': empty})
+
+
+@login_required
+def follow_view(request):
+    follows = Follow.objects.filter(
+        user=request.user).select_related('author').all()
+    author_list = []
+    for item in follows:
+        author = []
+        recipes = Recipe.objects.filter(
+            author=item.author).order_by("-id")[:3].all()
+        count = Recipe.objects.filter(author=item.author).count()
+        count -= 3
+        author.append(item.author)
+        author.append(recipes)
+        author.append(count)
+        author_list.append(author)
+    paginator = Paginator(author_list, 3)
+    page_number = request.GET.get('page', 1)
+    page = paginator.get_page(page_number)
+    empty = False
+    if author_list == []:
+        empty = True
+    print(empty)
+    return render(request, 'myFollow.html', {'page': page,
+                                             'paginator': paginator,
+                                             'empty': empty, })

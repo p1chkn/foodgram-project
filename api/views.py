@@ -2,7 +2,8 @@ from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 import re
 from rest_framework.decorators import api_view
-from recipes.models import Ingredient, Purchases, Recipe, Favorites
+from recipes.models import Ingredient, Purchases, Recipe, Favorites, Follow
+from users.models import User
 from .serializers import IngredientSerializer, PurchasesSerializer
 
 
@@ -28,7 +29,8 @@ def purchases(request):
         recipe = get_object_or_404(Recipe, id=recipe_id)
         if request.user.is_authenticated:
             user = request.user
-            purches = Purchases.objects.filter(user=user, recipe=recipe).exists()
+            purches = Purchases.objects.filter(
+                user=user, recipe=recipe).exists()
             if not purches:
                 Purchases.objects.create(user=user, recipe=recipe)
             return JsonResponse(data={"success": True})
@@ -74,4 +76,25 @@ def remove_favorites(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
     favorites = get_object_or_404(Favorites, user=user, recipe=recipe)
     favorites.delete()
+    return JsonResponse(data={"success": True})
+
+
+def add_sbscriptions(request):
+    if request.method == "POST":
+        body = request.body.decode('utf-8')
+        author_id = int(''.join(re.findall(r'\d+', body)))
+        author = get_object_or_404(User, id=author_id)
+        user = request.user
+        follow = Follow.objects.filter(user=user, author=author).exists()
+        if not follow:
+            Follow.objects.create(user=user, author=author)
+        return JsonResponse(data={"success": True})
+    return JsonResponse(data={"success": False})
+
+
+def remove_subscriptions(request, user_id):
+    user = request.user
+    auhtor = get_object_or_404(User, id=user_id)
+    follow = get_object_or_404(Follow, user=user, author=auhtor)
+    follow.delete()
     return JsonResponse(data={"success": True})

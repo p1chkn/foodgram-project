@@ -44,14 +44,15 @@ class Purchases(models.Model):
                              related_name='purchases')
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return self.user
-
 
 class Favorites(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,
                              related_name='favorites')
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return self.user
+
+class Follow(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+                             related_name='following')
+    author = models.ForeignKey(User, on_delete=models.CASCADE,
+                               related_name='follower')

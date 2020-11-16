@@ -25,6 +25,7 @@ const configButton = {
             text: `<span class="icon-favorite icon-favorite_active"></span>`
         }
     }
+   
 }
 function addOrUpdateUrlParam(name, value)
                     {
@@ -46,10 +47,12 @@ function addOrUpdateUrlParam(name, value)
 const purchases = new Purchases(configButton.purchases, api);
 const favorites = new Favorites(configButton.favorites, api);
 
+
 const cardList = new CardList(container, '.card', header, api, true, {
     purchases, 
     favorites
 });
+
 
 cardList.addEvent();
 
