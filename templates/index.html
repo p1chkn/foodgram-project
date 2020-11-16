@@ -14,7 +14,11 @@
 {% include 'nav.html' with menu=1 %}
     <main class="main container">
         <div class="main__header">
+            {% if username %}
+            <h1 class="main__title">{{ username }}</h1>
+            {% else %}
             <h1 class="main__title">Рецепты</h1>
+            {% endif %}
             {% include 'tags.html' %}
         </div>
         <div class="card-list">
@@ -23,6 +27,15 @@
             {% endfor %}
         </div>
         
+        {% if empty == True %}
+        <div class="custom-center-block">
+        <p class="custom-text-block">Эта страница пока пуста.</p>
+            <div class="custom-button-block">
+            <a href="{% url 'index' %}"><button class="button button_style_blue" >Перейти на главную</button></a>
+            </div>
+        </div>
+        {% endif %}
+
        {% if page.has_other_pages %}
        {% include "paginator.html" with page=page paginator=paginator %}
        {% endif %}

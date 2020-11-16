@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
+from users.models import User
 from .models import (
     Ingredient,
     Ingredients_in_recipe,
@@ -145,16 +146,21 @@ def recipe_view(request, recipe_id):
 
 
 def shoplist_view(request):
+    empty = False
     if request.user.is_authenticated:
         user = request.user
         purchases = Purchases.objects.filter(
             user=user).select_related('recipe').all()
         recipes = [i.recipe for i in purchases]
-        return render(request, 'shopList.html', {'recipes': recipes})
+        if recipes == []:
+            empty = True
     else:
         recipes_id = request.session.get('purchases', [])
         recipes = Recipe.objects.filter(id__in=recipes_id).all()
-        return render(request, 'shopList.html', {'recipes': recipes})
+        if not recipes.count():
+            empty = True
+    return render(request, 'shopList.html', {'recipes': recipes,
+                                             'empty': empty})
 
 
 @login_required
@@ -176,7 +182,39 @@ def favorites_view(request):
     paginator = Paginator(recipe_list, 6)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
-    return render(request, 'favorites.html', {'page': page,
-                                              'paginator': paginator,
-                                              'tags': tags,
-                                              })
+    empty = False
+    if not recipe_list.count():
+        empty = True
+    return render(request, 'index.html', {'page': page,
+                                          'paginator': paginator,
+                                          'tags': tags,
+                                          'empty': empty, })
+
+
+@login_required
+def user_view(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    recipes_list = Recipe.objects.order_by(
+        '-id').filter(author=user).all()
+    tags = [False, False, False]
+    if request.GET.get('breakfast') == 'True':
+        recipes_list = recipes_list.filter(tag__contains=1)
+        tags[0] = True
+    if request.GET.get('lunch') == 'True':
+        recipes_list = recipes_list.filter(tag__contains=2)
+        tags[1] = True
+    if request.GET.get('dinner') == 'True':
+        recipes_list = recipes_list.filter(tag__contains=3)
+        tags[2] = True
+    paginator = Paginator(recipes_list, 6)
+    page_number = request.GET.get('page', 1)
+    page = paginator.get_page(page_number)
+    username = user.username
+    empty = False
+    if not recipes_list.count():
+        empty = True
+    return render(request, 'index.html', {'page': page,
+                                          'paginator': paginator,
+                                          'tags': tags,
+                                          'username': username,
+                                          'empty': empty})

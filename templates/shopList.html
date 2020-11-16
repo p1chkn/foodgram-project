@@ -29,7 +29,11 @@
             </li>
             {% endfor %}
         </ul>
+        {% if empty == True %}
+        <a href="{% url 'index' %}"><button class="button button_style_blue">На главную</button></a>
+        {% else %}
         <a href="#"><button class="button button_style_blue">Скачать список</button></a>
+        {% endif %}
 
 
     </div>
