@@ -1,7 +1,9 @@
+da-vinci==0.3.0
 Django==2.2
 django-filter==2.4.0
 django-model-utils==4.0.0
 django-multiselectfield==0.1.12
+django-thumbnails==0.3.2
 djangorestframework==3.12.2
 flake8==3.8.4
 flake8-django==1.1.1
@@ -11,5 +13,7 @@ Pillow==8.0.1
 pycodestyle==2.6.0
 pyflakes==2.2.0
 pytz==2020.1
+shortuuid==1.0.1
+sorl-thumbnail==12.6.3
 sqlparse==0.4.1
 zipp==3.4.0
