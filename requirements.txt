@@ -13,6 +13,7 @@ Pillow==8.0.1
 pycodestyle==2.6.0
 pyflakes==2.2.0
 pytz==2020.1
+reportlab==3.5.55
 shortuuid==1.0.1
 sorl-thumbnail==12.6.3
 sqlparse==0.4.1

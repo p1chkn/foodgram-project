@@ -12,4 +12,6 @@ urlpatterns = [
     path('follows/', views.follow_view, name="follows"),
     path('recipe/delete/<int:recipe_id>/', views.remove_recipe,
          name="remove_recipe"),
+    path('shoplist/download/', views.download_shoplist,
+         name="download_shoplist"),
 ]

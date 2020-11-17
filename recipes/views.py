@@ -1,6 +1,10 @@
+from io import BytesIO
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
 from users.models import User
 from .models import (
     Ingredient,
@@ -256,3 +260,18 @@ def remove_recipe(request, recipe_id):
         return redirect('recipe', recipe_id=recipe_id)
     recipe.delete()
     return redirect('index')
+
+
+def download_shoplist(request):
+    if request.user.is_authenticated:
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="shoplist.pdf"'
+        buffer = BytesIO()
+        p = canvas.Canvas(buffer, pagesize=A4)
+        p.drawString(260, 800, 'hello')
+        p.showPage()
+        p.save()
+        pdf = buffer.getvalue()
+        buffer.close()
+        response.write(pdf)
+        return response
