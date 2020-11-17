@@ -76,6 +76,7 @@ def new_recipe(request):
 
 @login_required
 def recipe_edit(request, recipe_id):
+    editing = recipe_id
     edited_recipe = get_object_or_404(Recipe, id=recipe_id)
     tags = [int(i) for i in edited_recipe.tag]
     ingredients_in_recipe = Ingredients_in_recipe.objects.filter(
@@ -135,7 +136,8 @@ def recipe_edit(request, recipe_id):
                                                    'tags': tags})
     return render(request, 'new_recipe.html', {'form': form,
                                                'ingredients': ingredients,
-                                               'tags': tags})
+                                               'tags': tags,
+                                               'editing': editing})
 
 
 def recipe_view(request, recipe_id):
@@ -245,3 +247,12 @@ def follow_view(request):
     return render(request, 'myFollow.html', {'page': page,
                                              'paginator': paginator,
                                              'empty': empty, })
+
+
+@login_required
+def remove_recipe(request, recipe_id):
+    recipe = get_object_or_404(Recipe, id=recipe_id)
+    if request.user != recipe.author:
+        return redirect('recipe', recipe_id=recipe_id)
+    recipe.delete()
+    return redirect('index')

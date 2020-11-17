@@ -9,6 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Создание рецепта</title>
     <link rel="stylesheet" href="{% static '/pages/form.css' %}">
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
 </head>
 <body class="body">
 {% include 'nav.html' with menu=3 %}
@@ -85,34 +86,46 @@
             <div class="form__group">
                 <label for="id_description" class="form__label">Описание</label>
                 <div class="form__field-group">
-                    <textarea name="description" id="id_description" rows="8" class="form__textarea" value="{{ form.description }}"></textarea>
+                    <!-- <textarea name="description" id="id_description" rows="8" class="form__textarea" value="{{ form.description }}"></textarea> -->
+                    {{ form.description|addclass:"form__textarea"}}
                     <span class="form__error">{{ form.description.errors }}</span>
                 </div>
             </div>
-            <div class="form__group">
+             <div class="form__group">
                 <span class="form__label">Загрузить фото</span>
                 <div class="form__field-group">
-                    {{ form.image|addclass:"form__input" }}
+                    <label for="{{ form.image.id_for_label }}" class="form__file-button">Выбрать файл</label>
+              
+                    <input type="file" name="image" accept="image/*" class="form__file" id="id_image">
+                    <!-- <input type="file" class="form__file" name="{{ form.image.label }}" id="{{ form.image.id_for_label }}"> -->
                     <span class="form__error">{{ form.image.errors }}</span>
                 </div>
+            </div> 
+
+
+            <!--
+             <div class="form__group">
+                <span class="form__label">Загрузить фото</span>
+                <div class="form__field-group">
+                    {{ form.image.id_for_label  }}
+                    <span class="form__error">{{ form.image.errors }}</span>
+                </div>
+            </div> -->
+            {% if editing %}
+            <div class="form__footer">
+                <button type="submit" class="button button_style_blue">Сохранить</button> <a style="margin-left: 2.5em" href="{% url 'remove_recipe' recipe_id=editing %}" class="form__ingredient-link">Удалить</a>
             </div>
+            {% else %}
             <div class="form__footer">
                 <button type="submit" class="button button_style_blue">Создать рецепт</button>
             </div>
+            {% endif %}
         </form>
     </div>
 
 
 </main>
-<footer class="footer">
-    <div class="footer__container container">
-        <a href="#" class="footer__brand link">Продуктовый помощник</a>
-        <ul class="footer__items">
-            <li class="footer__item"><a href="#" class="footer__link link">Об авторе </a></li>
-            <li class="footer__item"><a href="#" class="footer__link link">Технологии</a></li>
-        </ul>
-    </div>
-</footer>
+{% include 'footer.html' %}
 <script src="{% static '/js/config/config.js' %}"></script>
 <script src="{% static '/js/components/Header.js'%}"></script>
 <script src="{% static '/js/utils/debouncing.js' %}"></script>
