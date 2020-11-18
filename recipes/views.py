@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase import ttfonts
 from users.models import User
 from .models import (
     Ingredient,
@@ -137,7 +139,8 @@ def recipe_edit(request, recipe_id):
                 return redirect('recipe', recipe_id=recipe_id)
         return render(request, 'new_recipe.html', {'form': form,
                                                    'ingredients': ingredients,
-                                                   'tags': tags})
+                                                   'tags': tags,
+                                                   'editing': editing})
     return render(request, 'new_recipe.html', {'form': form,
                                                'ingredients': ingredients,
                                                'tags': tags,
@@ -263,15 +266,53 @@ def remove_recipe(request, recipe_id):
 
 
 def download_shoplist(request):
+    ingredients = {}
     if request.user.is_authenticated:
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="shoplist.pdf"'
-        buffer = BytesIO()
-        p = canvas.Canvas(buffer, pagesize=A4)
-        p.drawString(260, 800, 'hello')
-        p.showPage()
-        p.save()
-        pdf = buffer.getvalue()
-        buffer.close()
-        response.write(pdf)
-        return response
+        purchases = Purchases.objects.filter(
+            user=request.user).select_related().all()
+        recipes = [i.recipe for i in purchases]
+    else:
+        purchases_id = request.session.get('purchases', [])
+        purchases = Recipe.objects.filter(
+            id__in=purchases_id).select_related().all()
+        recipes = [i for i in purchases]
+    for recipe in recipes:
+        ingredients_in_recipe = Ingredients_in_recipe.objects.filter(
+            recipe=recipe).select_related().all()
+        for item in ingredients_in_recipe:
+            if item.ingredient.title not in ingredients:
+                ingredients[item.ingredient.title] = [item.amount,
+                                                      item.ingredient.dimension]
+            else:
+                ingredients[item.ingredient.title][0] += item.amount
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="shoplist.pdf"'
+    buffer = BytesIO()
+    MyFontObject = ttfonts.TTFont('Arial', 'arial.ttf')
+    pdfmetrics.registerFont(MyFontObject)
+    p = canvas.Canvas(buffer, pagesize=A4)
+    p.setFont("Arial", 9)
+    p.drawString(260, 800, 'Список покупок:')
+    x1 = 20
+    y1 = 770
+    for key in ingredients:
+        p.drawString(x1, y1-12, f"{key} - {ingredients[key][0]} {ingredients[key][1]}")
+        y1 -= 20
+        p.setTitle("Список покупок")
+    p.showPage()
+    p.save()
+    pdf = buffer.getvalue()
+    buffer.close()
+    response.write(pdf)
+    return response
+
+
+def clear_shoplist(request):
+    if request.user.is_authenticated:
+        purchases = Purchases.objects.filter(
+            user=request.user).select_related().all()
+        for item in purchases:
+            purchases.delete()
+    else:
+        request.session['purchases'] = []
+    return redirect('index')
