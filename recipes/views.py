@@ -281,7 +281,7 @@ def download_shoplist(request):
         for item in ingredients_in_recipe:
             if item.ingredient.title not in ingredients:
                 ingredients[item.ingredient.title] = [item.amount,
-                                                      item.ingredient.dimension]
+                                                      item.ingredient.dimension] # noqa
             else:
                 ingredients[item.ingredient.title][0] += item.amount
     response = HttpResponse(content_type='application/pdf')
@@ -293,7 +293,7 @@ def download_shoplist(request):
     p.setFont("Arial", 7)
     p.drawString(20, 830, 'Автор проекта: Чуйкин Павел')
     p.drawString(400, 830, 'Ссылка на github:  https://github.com/p1chkn/')
-    p.drawString(20, 800, 'Ссылка на резюме:  https://hh.ru/resume/fcc0665cff0808b5fe0039ed1f6f65794c5650')
+    p.drawString(20, 800, 'Ссылка на резюме:  https://hh.ru/resume/fcc0665cff0808b5fe0039ed1f6f65794c5650') # noqa
     p.line(0, 780, 1000, 780)
     p.line(0, 778, 1000, 778)
     p.setFont("Arial", 9)
@@ -301,7 +301,7 @@ def download_shoplist(request):
     x1 = 20
     y1 = 720
     for key in ingredients:
-        p.drawString(x1, y1-12, f"{key} - {ingredients[key][0]} {ingredients[key][1]}")
+        p.drawString(x1, y1-12, f"{key} - {ingredients[key][0]} {ingredients[key][1]}") # noqa
         y1 -= 20
         p.setTitle("Список покупок")
     p.showPage()
@@ -321,3 +321,11 @@ def clear_shoplist(request):
     else:
         request.session['purchases'] = []
     return redirect('index')
+
+
+def page_not_found(request, exception=None):
+    return render(request, "misc/404.html", {"path": request.path}, status=404)
+
+
+def server_error(request):
+    return render(request, "misc/500.html", status=500)
