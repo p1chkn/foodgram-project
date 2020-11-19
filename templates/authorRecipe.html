@@ -19,6 +19,7 @@
 
         </div>
 <!--        <p style="padding: 0 0 2em 0;"><a class="button button_style_light-blue" href="#">Подписаться на автора</a></p>-->
+        {% if user != author %}
         <div class="author-subscribe" data-author="{{author.id}}">
             {% if author.id in subscriptions_id %}
             <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe button_style_blue" name="subscribe">Отписаться от автора</button></p>
@@ -26,6 +27,7 @@
             <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></p>
             {% endif %}
         </div>
+        {% endif %}
         <div class="card-list">
             {% for recipe in page %}
             {% include 'recipe.html' %}

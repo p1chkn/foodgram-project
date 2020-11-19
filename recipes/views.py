@@ -7,7 +7,6 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase import ttfonts
-from reportlab.lib.units import inch
 from users.models import User
 from .models import (
     Ingredient,

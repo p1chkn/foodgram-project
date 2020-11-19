@@ -14,5 +14,5 @@ urlpatterns = [
          name="remove_recipe"),
     path('shoplist/download/', views.download_shoplist,
          name="download_shoplist"),
-     path('shoplist/clear/', views.clear_shoplist, name="clear_shoplist"),
+    path('shoplist/clear/', views.clear_shoplist, name="clear_shoplist"),
 ]
