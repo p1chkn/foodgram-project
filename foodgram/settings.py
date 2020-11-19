@@ -33,7 +33,7 @@ ALLOWED_HOSTS = [
         "testserver",
 ]
 
-
+SITE_ID=3
 
 # Application definition
 
@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     'multiselectfield',
     'rest_framework',
     'django_filters',
+    'django.contrib.sites',
+    'django.contrib.flatpages',
 ]
 
 

@@ -7,6 +7,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase import ttfonts
+from reportlab.lib.units import inch
 from users.models import User
 from .models import (
     Ingredient,
@@ -250,7 +251,6 @@ def follow_view(request):
     empty = False
     if author_list == []:
         empty = True
-    print(empty)
     return render(request, 'myFollow.html', {'page': page,
                                              'paginator': paginator,
                                              'empty': empty, })
@@ -291,10 +291,16 @@ def download_shoplist(request):
     MyFontObject = ttfonts.TTFont('Arial', 'arial.ttf')
     pdfmetrics.registerFont(MyFontObject)
     p = canvas.Canvas(buffer, pagesize=A4)
+    p.setFont("Arial", 7)
+    p.drawString(20, 830, 'Автор проекта: Чуйкин Павел')
+    p.drawString(400, 830, 'Ссылка на github:  https://github.com/p1chkn/')
+    p.drawString(20, 800, 'Ссылка на резюме:  https://hh.ru/resume/fcc0665cff0808b5fe0039ed1f6f65794c5650')
+    p.line(0, 780, 1000, 780)
+    p.line(0, 778, 1000, 778)
     p.setFont("Arial", 9)
-    p.drawString(260, 800, 'Список покупок:')
+    p.drawString(260, 750, 'Список покупок:')
     x1 = 20
-    y1 = 770
+    y1 = 720
     for key in ingredients:
         p.drawString(x1, y1-12, f"{key} - {ingredients[key][0]} {ingredients[key][1]}")
         y1 -= 20
