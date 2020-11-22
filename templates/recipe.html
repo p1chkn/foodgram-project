@@ -5,17 +5,16 @@
     <div class="card__body">
         <a class="card__title link" href="{% url 'recipe' recipe_id=recipe.id %}" target="_blank">{{ recipe.title }}</a>
         <ul class="card__items">
-            {% for tag in recipe.tag %}
-            {%if tag == '2' %}
+            {%if '2' in recipe.tag %}
             <li class="card__item"><span class="badge badge_style_green">Обед</span></li>
             {% endif %}
-            {%if tag == '1' %}
+            {%if '1' in recipe.tag %}
             <li class="card__item"><span class="badge badge_style_orange">Завтрак</span></li>
             {% endif %}
-            {%if tag == '3' %}
+            {%if '3' in recipe.tag %}
             <li class="card__item"><span class="badge badge_style_purple">Ужин</span></li>
             {% endif %}
-            {% endfor %}
+           
         </ul>
         <div class="card__items card__items_column">
             <p class="card__text"><span class="icon-time"></span> {{ recipe.done_time }} мин.</p>

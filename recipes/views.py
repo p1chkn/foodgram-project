@@ -22,16 +22,11 @@ from .forms import RecipeForm
 def index(request):
     recipes_list = Recipe.objects.order_by(
         '-id').select_related('author').all()
-    tags = [False, False, False]
-    if request.GET.get('breakfast') == 'True':
-        recipes_list = recipes_list.filter(tag__contains=1)
-        tags[0] = True
-    if request.GET.get('lunch') == 'True':
-        recipes_list = recipes_list.filter(tag__contains=2)
-        tags[1] = True
-    if request.GET.get('dinner') == 'True':
-        recipes_list = recipes_list.filter(tag__contains=3)
-        tags[2] = True
+    tags = []
+    for i in Recipe.TagChoices.choices:
+        if request.GET.get(i[1]) == 'True':
+            recipes_list = recipes_list.filter(tag__contains=i[0])
+            tags.append(i[1])
     paginator = Paginator(recipes_list, 6)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
@@ -47,12 +42,9 @@ def new_recipe(request):
         form = RecipeForm(request.POST or None, files=request.FILES or None)
         ingredients = []
         tags = []
-        if 'breakfast' in request.POST:
-            tags.append(1)
-        if 'lunch' in request.POST:
-            tags.append(2)
-        if 'dinner' in request.POST:
-            tags.append(3)
+        for i in Recipe.TagChoices.choices:
+            if i[1] in request.POST:
+                tags.append(i[0])
         for item in request.POST:
             ingredient = []
             if item.startswith('nameIngredient_'):
@@ -100,12 +92,9 @@ def recipe_edit(request, recipe_id):
                       instance=edited_recipe)
     if request.method == 'POST':
         tags = []
-        if 'breakfast' in request.POST:
-            tags.append(1)
-        if 'lunch' in request.POST:
-            tags.append(2)
-        if 'dinner' in request.POST:
-            tags.append(3)
+        for i in Recipe.TagChoices.choices:
+            if i[1] in request.POST:
+                tags.append(i[0])
         new_ingredients = []
         for item in request.POST:
             ingredient = []
@@ -179,16 +168,11 @@ def favorites_view(request):
         user=request.user).select_related('recipe').all()
     recipes_id_list = [i.recipe.id for i in favorites]
     recipe_list = Recipe.objects.filter(id__in=recipes_id_list).all()
-    tags = [False, False, False]
-    if request.GET.get('breakfast') == 'True':
-        recipe_list = recipe_list.filter(tag__contains=1)
-        tags[0] = True
-    if request.GET.get('lunch') == 'True':
-        recipe_list = recipe_list.filter(tag__contains=2)
-        tags[1] = True
-    if request.GET.get('dinner') == 'True':
-        recipe_list = recipe_list.filter(tag__contains=3)
-        tags[2] = True
+    tags = []
+    for i in Recipe.TagChoices.choices:
+        if request.GET.get(i[1]) == 'True':
+            recipe_list = recipe_list.filter(tag__contains=i[0])
+            tags.append(i[1])
     paginator = Paginator(recipe_list, 6)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
@@ -206,16 +190,11 @@ def user_view(request, user_id):
     author = get_object_or_404(User, id=user_id)
     recipes_list = Recipe.objects.order_by(
         '-id').filter(author=author).all()
-    tags = [False, False, False]
-    if request.GET.get('breakfast') == 'True':
-        recipes_list = recipes_list.filter(tag__contains=1)
-        tags[0] = True
-    if request.GET.get('lunch') == 'True':
-        recipes_list = recipes_list.filter(tag__contains=2)
-        tags[1] = True
-    if request.GET.get('dinner') == 'True':
-        recipes_list = recipes_list.filter(tag__contains=3)
-        tags[2] = True
+    tags = []
+    for i in Recipe.TagChoices.choices:
+        if request.GET.get(i[1]) == 'True':
+            recipes_list = recipes_list.filter(tag__contains=i[0])
+            tags.append(i[1])
     paginator = Paginator(recipes_list, 6)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)

@@ -1,6 +1,7 @@
 <ul class="tags">
+
     <li class="tags__item">                
-        {% if tags.0 %}
+        {% if 'breakfast' in tags %}
         <a id="breakfast" class="tags__checkbox tags__checkbox_style_orange tags__checkbox_active" href="javascript:addOrUpdateUrlParam('breakfast', 'False')"></a>
         {% else %}
         <a id="breakfast" class="tags__checkbox tags__checkbox_style_orange" href="javascript:addOrUpdateUrlParam('breakfast', 'True')"></a>
@@ -8,7 +9,7 @@
         <span class="tags__label">Завтрак</span>    
     </li>
     <li class="tags__item">
-        {% if tags.1 %}
+        {% if 'lunch' in tags %}
         <a id="lunch" class="tags__checkbox tags__checkbox_style_green tags__checkbox_active" href="javascript:addOrUpdateUrlParam('lunch', 'False')"></a>
         {% else %}
         <a id="lunch" class="tags__checkbox tags__checkbox_style_green" href="javascript:addOrUpdateUrlParam('lunch', 'True')"></a>
@@ -16,7 +17,7 @@
         <span for="lunch" class="tags__label">Обед</span>
     </li>
     <li class="tags__item">
-        {% if tags.2 %}
+        {% if 'dinner' in tags %}
         <a id="dinner" class="tags__checkbox tags__checkbox_style_purple tags__checkbox_active" href="javascript:addOrUpdateUrlParam('dinner', 'False')"></a>
         {% else %}
         <a id="dinner" class="tags__checkbox tags__checkbox_style_purple" href="javascript:addOrUpdateUrlParam('dinner', 'True')"></a>

@@ -1,5 +1,6 @@
 from django.db import models
 from users.models import User
+from django.utils.translation import gettext_lazy as _
 from multiselectfield import MultiSelectField
 
 
@@ -12,17 +13,16 @@ class Ingredient(models.Model):
 
 
 class Recipe(models.Model):
-    TAG_CHOICES = (
-        (1, 'завтрак'),
-        (2, 'обед'),
-        (3, 'ужин')
-            )
+    class TagChoices(models.IntegerChoices):
+        BREAKFAST = 1, _('breakfast')
+        LUNCH = 2, _('lunch')
+        DINNER = 3, _('dinner')
     author = models.ForeignKey(User, on_delete=models.CASCADE,
                                related_name='recipe')
     title = models.CharField(max_length=200)
     image = models.ImageField(upload_to='recipe_image/')
     description = models.TextField()
-    tag = MultiSelectField(choices=TAG_CHOICES, null=True)
+    tag = MultiSelectField(choices=TagChoices.choices, null=True)
     done_time = models.IntegerField()
 
     def __str__(self):
