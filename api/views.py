@@ -2,7 +2,9 @@ import re
 
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from recipes.models import Favorites, Follow, Ingredient, Purchases, Recipe
 from users.models import User
@@ -17,6 +19,43 @@ def ingredients(request):
     data = Ingredient.objects.filter(title__contains=query).all()
     serializer = IngredientSerializer(data, many=True)
     return JsonResponse(serializer.data, safe=False)
+
+
+class PurchasesViewSet(viewsets.ModelViewSet):
+
+    queryset = Recipe.objects.all()
+    serializer_class = PurchasesSerializer
+
+    def get_queryset(self):
+        queryset = Purchases.objects.filter(user=self.request.user).all()
+        return queryset
+
+    def create(self, request, *args, **kwargs):
+        recipe = get_object_or_404(Recipe, id=request._data['id'])
+        if request.user.is_authenticated:
+            user = request.user
+            Purchases.objects.get_or_create(user=user, recipe=recipe)
+            return JsonResponse(data={"success": True})
+        else:
+            purchases = request.session.get('purchases', [])
+            if recipe not in purchases:
+                purchases.append(recipe.id)
+                request.session['purchases'] = purchases
+            return JsonResponse(data={"success": True})
+        return Response(data={"success": True}, status=status.HTTP_201_CREATED)
+
+    def destroy(self, request, *args, **kwargs):
+        recipe = get_object_or_404(Recipe, id=self.kwargs['pk'])
+        if request.user.is_authenticated:
+            user = request.user
+            purches = get_object_or_404(Purchases, user=user, recipe=recipe)
+            purches.delete()
+            return JsonResponse(data={"success": True})
+        else:
+            purchases = request.session.get('purchases', [])
+            purchases.remove(recipe.id)
+            request.session['purchases'] = purchases
+            return JsonResponse(data={"success": True})
 
 
 def purchases(request):
