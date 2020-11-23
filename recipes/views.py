@@ -11,7 +11,7 @@ from reportlab.pdfgen import canvas
 from users.models import User
 
 from .forms import RecipeForm
-from .models import (Favorites, Follow, Ingredient, Ingredients_in_recipe,
+from .models import (Favorites, Follow, Ingredient, IngredientsInRecipe,
                      Purchases, Recipe)
 
 
@@ -78,9 +78,9 @@ def new_recipe(request):
             recipe.save()
             for item in ingredients:
                 ingredient = Ingredient.objects.get(title=item[0])
-                Ingredients_in_recipe.objects.create(recipe=recipe,
-                                                     ingredient=ingredient,
-                                                     amount=item[1])
+                IngredientsInRecipe.objects.create(recipe=recipe,
+                                                   ingredient=ingredient,
+                                                   amount=item[1])
             return redirect('index')
         return render(request, 'new_recipe.html', {'form': form,
                                                    'ingredients': ingredients,
@@ -94,7 +94,7 @@ def recipe_edit(request, recipe_id):
     editing = recipe_id
     edited_recipe = get_object_or_404(Recipe, id=recipe_id)
     tags = [int(i) for i in edited_recipe.tag]
-    ingredients_in_recipe = Ingredients_in_recipe.objects.filter(
+    ingredients_in_recipe = IngredientsInRecipe.objects.filter(
         recipe=edited_recipe).select_related('ingredient').all()
     ingredients = []
     for item in ingredients_in_recipe:
@@ -134,14 +134,14 @@ def recipe_edit(request, recipe_id):
                 deleting = ingredients.difference(new_ingredients)
                 for item in deleting:
                     ingredient = Ingredient.objects.get(title=item[0])
-                    del_item = Ingredients_in_recipe.objects.get(
+                    del_item = IngredientsInRecipe.objects.get(
                         recipe=recipe, ingredient=ingredient)
                     del_item.delete()
                 for item in adding:
                     ingredient = Ingredient.objects.get(title=item[0])
-                    Ingredients_in_recipe.objects.create(recipe=recipe,
-                                                         ingredient=ingredient,
-                                                         amount=item[1])
+                    IngredientsInRecipe.objects.create(recipe=recipe,
+                                                       ingredient=ingredient,
+                                                       amount=item[1])
                 return redirect('recipe', recipe_id=recipe_id)
         return render(request, 'new_recipe.html', {'form': form,
                                                    'ingredients': ingredients,
@@ -155,7 +155,7 @@ def recipe_edit(request, recipe_id):
 
 def recipe_view(request, recipe_id):
     recipe = get_object_or_404(Recipe, pk=recipe_id)
-    ingredients = Ingredients_in_recipe.objects.filter(
+    ingredients = IngredientsInRecipe.objects.filter(
         recipe=recipe).select_related('ingredient').all()
     purchases_id, favorites_id = get_purchases_and_favorites(request)
     subscriptions_id = Follow.objects.filter(
@@ -301,7 +301,7 @@ def download_shoplist(request):
             id__in=purchases_id).select_related().all()
         recipes = [i for i in purchases]
     for recipe in recipes:
-        ingredients_in_recipe = Ingredients_in_recipe.objects.filter(
+        ingredients_in_recipe = IngredientsInRecipe.objects.filter(
             recipe=recipe).select_related().all()
         for item in ingredients_in_recipe:
             if item.ingredient.title not in ingredients:

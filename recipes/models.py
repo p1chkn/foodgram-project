@@ -12,6 +12,9 @@ class Ingredient(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = "Ингредиенты"
+
 
 class Recipe(models.Model):
     class TagChoices(models.IntegerChoices):
@@ -29,8 +32,11 @@ class Recipe(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = "Рецепты"
 
-class Ingredients_in_recipe(models.Model):
+
+class IngredientsInRecipe(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT,
                                    related_name='ingredients_in_recipe')
@@ -39,11 +45,17 @@ class Ingredients_in_recipe(models.Model):
     def __str__(self):
         return self.ingredient.title
 
+    class Meta:
+        verbose_name = "Ингредиенты в рецептах"
+
 
 class Purchases(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,
                              related_name='purchases')
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = "Покупки"
 
 
 class Favorites(models.Model):
@@ -51,9 +63,15 @@ class Favorites(models.Model):
                              related_name='favorites')
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
 
+    class Meta:
+        verbose_name = "Избранное"
+
 
 class Follow(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,
                              related_name='following')
     author = models.ForeignKey(User, on_delete=models.CASCADE,
                                related_name='follower')
+
+    class Meta:
+        verbose_name = "Подкиски"
