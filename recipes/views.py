@@ -1,22 +1,18 @@
 from io import BytesIO
-from django.shortcuts import render, redirect, get_object_or_404
-from django.core.paginator import Paginator
+
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.http import HttpResponse
-from reportlab.pdfgen import canvas
+from django.shortcuts import get_object_or_404, redirect, render
 from reportlab.lib.pagesizes import A4
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase import ttfonts
+from reportlab.pdfbase import pdfmetrics, ttfonts
+from reportlab.pdfgen import canvas
+
 from users.models import User
-from .models import (
-    Ingredient,
-    Ingredients_in_recipe,
-    Recipe,
-    Purchases,
-    Favorites,
-    Follow,
-)
+
 from .forms import RecipeForm
+from .models import (Favorites, Follow, Ingredient, Ingredients_in_recipe,
+                     Purchases, Recipe)
 
 
 def index(request):
@@ -24,9 +20,15 @@ def index(request):
         '-id').select_related('author').all()
     tags = []
     for i in Recipe.TagChoices.choices:
-        if request.GET.get(i[1]) == 'True':
+        if request.GET.get(str(i[0])) == 'True':
             recipes_list = recipes_list.filter(tag__contains=i[0])
-            tags.append(i[1])
+            i = list(i)
+            i.append('True')
+            tags.append(i)
+        else:
+            i = list(i)
+            i.append('False')
+            tags.append(i)
     paginator = Paginator(recipes_list, 6)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
@@ -170,19 +172,27 @@ def favorites_view(request):
     recipe_list = Recipe.objects.filter(id__in=recipes_id_list).all()
     tags = []
     for i in Recipe.TagChoices.choices:
-        if request.GET.get(i[1]) == 'True':
+        if request.GET.get(str(i[0])) == 'True':
             recipe_list = recipe_list.filter(tag__contains=i[0])
-            tags.append(i[1])
+            i = list(i)
+            i.append('True')
+            tags.append(i)
+        else:
+            i = list(i)
+            i.append('False')
+            tags.append(i)
     paginator = Paginator(recipe_list, 6)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
     empty = False
+    favorites = True
     if not recipe_list.count():
         empty = True
     return render(request, 'index.html', {'page': page,
                                           'paginator': paginator,
                                           'tags': tags,
-                                          'empty': empty, })
+                                          'empty': empty,
+                                          'favorites': favorites})
 
 
 @login_required
@@ -192,9 +202,15 @@ def user_view(request, user_id):
         '-id').filter(author=author).all()
     tags = []
     for i in Recipe.TagChoices.choices:
-        if request.GET.get(i[1]) == 'True':
+        if request.GET.get(str(i[0])) == 'True':
             recipes_list = recipes_list.filter(tag__contains=i[0])
-            tags.append(i[1])
+            i = list(i)
+            i.append('True')
+            tags.append(i)
+        else:
+            i = list(i)
+            i.append('False')
+            tags.append(i)
     paginator = Paginator(recipes_list, 6)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)

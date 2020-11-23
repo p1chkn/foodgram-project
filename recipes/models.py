@@ -1,7 +1,8 @@
 from django.db import models
-from users.models import User
 from django.utils.translation import gettext_lazy as _
 from multiselectfield import MultiSelectField
+
+from users.models import User
 
 
 class Ingredient(models.Model):
@@ -14,9 +15,9 @@ class Ingredient(models.Model):
 
 class Recipe(models.Model):
     class TagChoices(models.IntegerChoices):
-        BREAKFAST = 1, _('breakfast')
-        LUNCH = 2, _('lunch')
-        DINNER = 3, _('dinner')
+        BREAKFAST = 1, _('завтрак')
+        LUNCH = 2, _('обед')
+        DINNER = 3, _('ужин')
     author = models.ForeignKey(User, on_delete=models.CASCADE,
                                related_name='recipe')
     title = models.CharField(max_length=200)

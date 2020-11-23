@@ -1,27 +1,12 @@
 <ul class="tags">
-
-    <li class="tags__item">                
-        {% if 'breakfast' in tags %}
-        <a id="breakfast" class="tags__checkbox tags__checkbox_style_orange tags__checkbox_active" href="javascript:addOrUpdateUrlParam('breakfast', 'False')"></a>
+    {% for tag in tags %}
+    <li class="tags__item">             
+        {% if tag.2 == "True" %}
+        <a id="breakfast" class="tags__checkbox {% if tag.0 == 1 %}tags__checkbox_style_orange {% elif tag.0 == 2 %} tags__checkbox_style_green {% else %} tags__checkbox_style_purple {% endif %} tags__checkbox_active" href="javascript:addOrUpdateUrlParam('{{tag.0}}', 'False')"></a>
         {% else %}
-        <a id="breakfast" class="tags__checkbox tags__checkbox_style_orange" href="javascript:addOrUpdateUrlParam('breakfast', 'True')"></a>
+        <a id="breakfast" class="tags__checkbox {% if tag.0 == 1 %}tags__checkbox_style_orange {% elif tag.0 == 2 %} tags__checkbox_style_green {% else %} tags__checkbox_style_purple {% endif %}" href="javascript:addOrUpdateUrlParam('{{tag.0}}', 'True')"></a>
         {% endif %}
-        <span class="tags__label">Завтрак</span>    
+        <span class="tags__label">{{ tag.1 }}</span>    
     </li>
-    <li class="tags__item">
-        {% if 'lunch' in tags %}
-        <a id="lunch" class="tags__checkbox tags__checkbox_style_green tags__checkbox_active" href="javascript:addOrUpdateUrlParam('lunch', 'False')"></a>
-        {% else %}
-        <a id="lunch" class="tags__checkbox tags__checkbox_style_green" href="javascript:addOrUpdateUrlParam('lunch', 'True')"></a>
-        {% endif %}
-        <span for="lunch" class="tags__label">Обед</span>
-    </li>
-    <li class="tags__item">
-        {% if 'dinner' in tags %}
-        <a id="dinner" class="tags__checkbox tags__checkbox_style_purple tags__checkbox_active" href="javascript:addOrUpdateUrlParam('dinner', 'False')"></a>
-        {% else %}
-        <a id="dinner" class="tags__checkbox tags__checkbox_style_purple" href="javascript:addOrUpdateUrlParam('dinner', 'True')"></a>
-        {% endif %}
-        <span for="lunch" class="tags__label">Ужин</span>
-    </li>
+    {% endfor %}
 </ul>

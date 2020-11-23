@@ -1,9 +1,12 @@
-from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
 import re
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
-from recipes.models import Ingredient, Purchases, Recipe, Favorites, Follow
+
+from recipes.models import Favorites, Follow, Ingredient, Purchases, Recipe
 from users.models import User
+
 from .serializers import IngredientSerializer, PurchasesSerializer
 
 

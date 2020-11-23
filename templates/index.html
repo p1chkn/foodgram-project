@@ -11,21 +11,20 @@
     <link rel="stylesheet" href="{% static '/pages/index.css' %}">
 </head>
 <body class="body">
-{% include 'nav.html' with menu=1 %}
+    {% if favorites %}
+    {% include 'nav.html' with menu=4 %}
+    {% else %}
+    {% include 'nav.html' with menu=1 %}
+    {% endif %}
     <main class="main container">
         <div class="main__header">
-            {% if username %}
-            <h1 class="main__title">{{ username }}</h1>
+            {% if favorites %}
+            <h1 class="main__title">Избранное</h1>
             {% else %}
             <h1 class="main__title">Рецепты</h1>
             {% endif %}
             {% include 'tags.html' %}
         </div>
-        {% if username %}
-        <div class="author-subscribe" data-author="323">
-            <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></p>
-        </div>  
-        {% endif %}
         <div class="card-list">
             {% for recipe in page %}
             {% include 'recipe.html' %}
