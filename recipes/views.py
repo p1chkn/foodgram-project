@@ -15,6 +15,18 @@ from .models import (Favorites, Follow, Ingredient, Ingredients_in_recipe,
                      Purchases, Recipe)
 
 
+def get_purchases_and_favorites(request):
+    if request.user.is_authenticated:
+        purchases_id = Purchases.objects.filter(
+            user=request.user).values_list('recipe__id', flat=True)
+        favorites_id = Favorites.objects.filter(
+            user=request.user).values_list('recipe__id', flat=True)
+    else:
+        favorites_id = []
+        purchases_id = request.session.get('purchases', [])
+    return purchases_id, favorites_id
+
+
 def index(request):
     recipes_list = Recipe.objects.order_by(
         '-id').select_related('author').all()
@@ -32,9 +44,12 @@ def index(request):
     paginator = Paginator(recipes_list, 6)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
+    purchases_id, favorites_id = get_purchases_and_favorites(request)
     return render(request, 'index.html', {'page': page,
                                           'paginator': paginator,
                                           'tags': tags,
+                                          'purchases_id': purchases_id,
+                                          'favorites_id': favorites_id,
                                           })
 
 
@@ -142,8 +157,14 @@ def recipe_view(request, recipe_id):
     recipe = get_object_or_404(Recipe, pk=recipe_id)
     ingredients = Ingredients_in_recipe.objects.filter(
         recipe=recipe).select_related('ingredient').all()
+    purchases_id, favorites_id = get_purchases_and_favorites(request)
+    subscriptions_id = Follow.objects.filter(
+        user=request.user).values_list('author__id', flat=True)
     return render(request, 'singlePage.html', {'recipe': recipe,
-                                               'ingredients': ingredients})
+                                               'ingredients': ingredients,
+                                               'purchases_id': purchases_id,
+                                               'favorites_id': favorites_id,
+                                               'subscriptions_id': subscriptions_id }) # noqa
 
 
 def shoplist_view(request):
@@ -188,11 +209,14 @@ def favorites_view(request):
     favorites = True
     if not recipe_list.count():
         empty = True
+    purchases_id, favorites_id = get_purchases_and_favorites(request)
     return render(request, 'index.html', {'page': page,
                                           'paginator': paginator,
                                           'tags': tags,
                                           'empty': empty,
-                                          'favorites': favorites})
+                                          'favorites': favorites,
+                                          'purchases_id': purchases_id,
+                                          'favorites_id': favorites_id, })
 
 
 @login_required
@@ -217,11 +241,17 @@ def user_view(request, user_id):
     empty = False
     if not recipes_list.count():
         empty = True
+    purchases_id, favorites_id = get_purchases_and_favorites(request)
+    subscriptions_id = Follow.objects.filter(
+        user=request.user).values_list('author__id', flat=True)
     return render(request, 'authorRecipe.html', {'page': page,
                                                  'paginator': paginator,
                                                  'tags': tags,
                                                  'author': author,
-                                                 'empty': empty})
+                                                 'empty': empty,
+                                                 'purchases_id': purchases_id,
+                                                 'favorites_id': favorites_id,
+                                                 'subscriptions_id': subscriptions_id }) # noqa 
 
 
 @login_required
