@@ -9,7 +9,8 @@ from rest_framework.response import Response
 from recipes.models import Favorites, Follow, Ingredient, Purchases, Recipe
 from users.models import User
 
-from .serializers import IngredientSerializer, PurchasesSerializer
+from .serializers import IngredientSerializer, PurchasesSerializer, FavoritesSerializer
+from .permissions import IsAuthenticated
 
 
 @api_view(['GET'])
@@ -58,67 +59,24 @@ class PurchasesViewSet(viewsets.ModelViewSet):
             return JsonResponse(data={"success": True})
 
 
-def purchases(request):
+class FavoritesViewSet(viewsets.ModelViewSet):
 
-    if request.method == 'GET':
+    queryset = Favorites.objects.all()
+    serializer_class = FavoritesSerializer
+    permission_classes = [IsAuthenticated, ]
+
+    def create(self, request, *args, **kwargs):
+        recipe = get_object_or_404(Recipe, id=request._data['id'])
         user = request.user
-        data = Purchases.objects.filter(user=user).all()
-        serializer = PurchasesSerializer(data, many=True)
-        return JsonResponse(serializer.data, safe=False)
-    if request.method == 'POST':
-        body = request.body.decode('utf-8')
-        recipe_id = int(''.join(re.findall(r'\d+', body)))
-        recipe = get_object_or_404(Recipe, id=recipe_id)
-        if request.user.is_authenticated:
-            user = request.user
-            purches = Purchases.objects.filter(
-                user=user, recipe=recipe).exists()
-            if not purches:
-                Purchases.objects.create(user=user, recipe=recipe)
-            return JsonResponse(data={"success": True})
-        else:
-            purchases = request.session.get('purchases', [])
-            if recipe not in purchases:
-                purchases.append(recipe.id)
-                request.session['purchases'] = purchases
-            return JsonResponse(data={"success": True})
-    return JsonResponse(data={"success": False})
-
-
-@api_view(['DELETE'])
-def remove_purchases(request, recipe_id):
-    recipe = get_object_or_404(Recipe, id=recipe_id)
-    if request.user.is_authenticated:
-        user = request.user
-        purches = get_object_or_404(Purchases, user=user, recipe=recipe)
-        purches.delete()
-        return JsonResponse(data={"success": True})
-    else:
-        purchases = request.session.get('purchases', [])
-        purchases.remove(recipe.id)
-        request.session['purchases'] = purchases
+        Favorites.objects.get_or_create(user=user, recipe=recipe)
         return JsonResponse(data={"success": True})
 
-
-def add_favorites(request):
-    if request.method == "POST":
-        body = request.body.decode('utf-8')
-        recipe_id = int(''.join(re.findall(r'\d+', body)))
-        recipe = get_object_or_404(Recipe, id=recipe_id)
-        user = request.user
-        favorites = Favorites.objects.filter(user=user, recipe=recipe).exists()
-        if not favorites:
-            Favorites.objects.create(user=user, recipe=recipe)
+    def destroy(self, request, *args, **kwargs):
+        recipe = get_object_or_404(Recipe, id=self.kwargs['pk'])
+        favorites = get_object_or_404(
+            Favorites, user=request.user, recipe=recipe)
+        favorites.delete()
         return JsonResponse(data={"success": True})
-    return JsonResponse(data={"success": False})
-
-
-def remove_favorites(request, recipe_id):
-    user = request.user
-    recipe = get_object_or_404(Recipe, id=recipe_id)
-    favorites = get_object_or_404(Favorites, user=user, recipe=recipe)
-    favorites.delete()
-    return JsonResponse(data={"success": True})
 
 
 def add_sbscriptions(request):
