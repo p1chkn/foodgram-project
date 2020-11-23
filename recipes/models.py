@@ -74,4 +74,4 @@ class Follow(models.Model):
                                related_name='follower')
 
     class Meta:
-        verbose_name = "Подкиски"
+        verbose_name = "Подписки"
