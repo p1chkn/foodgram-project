@@ -1,16 +1,15 @@
-import re
-
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, status
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from recipes.models import Favorites, Follow, Ingredient, Purchases, Recipe
 from users.models import User
 
-from .serializers import IngredientSerializer, PurchasesSerializer, FavoritesSerializer
 from .permissions import IsAuthenticated
+from .serializers import (FavoritesSerializer, FollowSerializer,
+                          IngredientSerializer, PurchasesSerializer)
 
 
 @api_view(['GET'])
@@ -79,22 +78,21 @@ class FavoritesViewSet(viewsets.ModelViewSet):
         return JsonResponse(data={"success": True})
 
 
-def add_sbscriptions(request):
-    if request.method == "POST":
-        body = request.body.decode('utf-8')
-        author_id = int(''.join(re.findall(r'\d+', body)))
-        author = get_object_or_404(User, id=author_id)
+class SubscriptionViewSet(viewsets.ModelViewSet):
+
+    queryset = Follow.objects.all()
+    serializer_class = FollowSerializer
+    permission_classes = [IsAuthenticated, ]
+
+    def create(self, request, *args, **kwargs):
+        author = get_object_or_404(User, id=request._data['id'])
         user = request.user
-        follow = Follow.objects.filter(user=user, author=author).exists()
-        if not follow:
-            Follow.objects.create(user=user, author=author)
+        Follow.objects.get_or_create(user=user, author=author)
         return JsonResponse(data={"success": True})
-    return JsonResponse(data={"success": False})
 
-
-def remove_subscriptions(request, user_id):
-    user = request.user
-    auhtor = get_object_or_404(User, id=user_id)
-    follow = get_object_or_404(Follow, user=user, author=auhtor)
-    follow.delete()
-    return JsonResponse(data={"success": True})
+    def destroy(self, request, *args, **kwargs):
+        auhtor = get_object_or_404(User, id=self.kwargs['pk'])
+        follow = get_object_or_404(
+            Follow, user=request.user, author=auhtor)
+        follow.delete()
+        return JsonResponse(data={"success": True})
