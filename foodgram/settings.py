@@ -31,6 +31,7 @@ ALLOWED_HOSTS = [
         "127.0.0.1",
         "[::1]",
         "testserver",
+        "p1chkn-foodgram.ga",
 ]
 
 SITE_ID=3
