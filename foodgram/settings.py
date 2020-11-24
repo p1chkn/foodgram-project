@@ -10,10 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
-import os, datetime, environ
-
-env = environ.Env()
-environ.Env.read_env()
+import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'nv@u0kn3@=$1==f^=i*sf809c^(o25%z!@2i1k*vp=28-cwsy+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
         '*',
@@ -36,7 +33,7 @@ ALLOWED_HOSTS = [
         "testserver",
 ]
 
-SITE_ID = 3
+SITE_ID=3
 
 # Application definition
 
