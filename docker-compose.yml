@@ -1,6 +1,6 @@
-version: '3'
+version: '3.7'
 
-olumes:
+volumes:
   postgres_data:
   static_volume:
   media_volume:
