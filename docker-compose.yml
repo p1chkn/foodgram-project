@@ -1,0 +1,37 @@
+version: '3.7'
+
+olumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
+services:
+  db:
+    image: postgres:13.1
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./foodgram/.env
+  web:
+    build: .
+    command: gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000 
+    restart: always
+    volumes: 
+      - static_volume:/code/static
+      - media_volume:/code/media
+    expose:
+      - 8000
+    depends_on:
+      - db
+    env_file:
+      - ./foodgram/.env
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_volume:/code/static
+      - media_volume:/code/media
+    ports:
+      - 80:80
+    depends_on:
+      - web 
