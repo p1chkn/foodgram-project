@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'nv@u0kn3@=$1==f^=i*sf809c^(o25%z!@2i1k*vp=28-cwsy+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
         '*',
@@ -34,7 +34,7 @@ ALLOWED_HOSTS = [
         "p1chkn-foodgram.ga",
 ]
 
-SITE_ID = 1
+SITE_ID = 4
 
 # Application definition
 
