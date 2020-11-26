@@ -5,5 +5,5 @@ from .forms import CreationForm
 
 class SignUp(CreateView):
     form_class = CreationForm
-    success_url = "/index/"
+    success_url = "/"
     template_name = "signup.html"
