@@ -1,3 +1,5 @@
+import re
+
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
@@ -31,14 +33,18 @@ class PurchasesViewSet(viewsets.ModelViewSet):
         return queryset
 
     def create(self, request, *args, **kwargs):
-        recipe = get_object_or_404(Recipe, id=request._data['id'])
+        
         if request.user.is_authenticated:
+            recipe = get_object_or_404(Recipe, id=request._data['id'])
             user = request.user
             Purchases.objects.get_or_create(user=user, recipe=recipe)
             return JsonResponse(data={"success": True})
         else:
+            body = request.body.decode('utf-8')
+            recipe_id = int(''.join(re.findall(r'\d+', body)))
+            recipe = get_object_or_404(Recipe, id=recipe_id)
             purchases = request.session.get('purchases', [])
-            if recipe not in purchases:
+            if recipe.id not in purchases:
                 purchases.append(recipe.id)
                 request.session['purchases'] = purchases
             return JsonResponse(data={"success": True})

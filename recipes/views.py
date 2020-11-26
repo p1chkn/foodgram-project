@@ -160,11 +160,11 @@ def recipe_view(request, recipe_id):
     purchases_id, favorites_id = get_purchases_and_favorites(request)
     subscriptions_id = Follow.objects.filter(
         user=request.user).values_list('author__id', flat=True)
-    return render(request, 'singlePage.html', {'recipe': recipe,
-                                               'ingredients': ingredients,
-                                               'purchases_id': purchases_id,
-                                               'favorites_id': favorites_id,
-                                               'subscriptions_id': subscriptions_id }) # noqa
+    return render(request, 'single_page.html', {'recipe': recipe,
+                                                'ingredients': ingredients,
+                                                'purchases_id': purchases_id,
+                                                'favorites_id': favorites_id,
+                                                'subscriptions_id': subscriptions_id }) # noqa
 
 
 def shoplist_view(request):
@@ -181,7 +181,7 @@ def shoplist_view(request):
         recipes = Recipe.objects.filter(id__in=recipes_id).all()
         if not recipes.count():
             empty = True
-    return render(request, 'shopList.html', {'recipes': recipes,
+    return render(request, 'shoplist.html', {'recipes': recipes,
                                              'empty': empty})
 
 
@@ -244,14 +244,14 @@ def user_view(request, user_id):
     purchases_id, favorites_id = get_purchases_and_favorites(request)
     subscriptions_id = Follow.objects.filter(
         user=request.user).values_list('author__id', flat=True)
-    return render(request, 'authorRecipe.html', {'page': page,
-                                                 'paginator': paginator,
-                                                 'tags': tags,
-                                                 'author': author,
-                                                 'empty': empty,
-                                                 'purchases_id': purchases_id,
-                                                 'favorites_id': favorites_id,
-                                                 'subscriptions_id': subscriptions_id }) # noqa 
+    return render(request, 'author_recipe.html', {'page': page,
+                                                  'paginator': paginator,
+                                                  'tags': tags,
+                                                  'author': author,
+                                                  'empty': empty,
+                                                  'purchases_id': purchases_id,
+                                                  'favorites_id': favorites_id,
+                                                  'subscriptions_id': subscriptions_id }) # noqa 
 
 
 @login_required
@@ -275,9 +275,9 @@ def follow_view(request):
     empty = False
     if author_list == []:
         empty = True
-    return render(request, 'myFollow.html', {'page': page,
-                                             'paginator': paginator,
-                                             'empty': empty, })
+    return render(request, 'my_follow.html', {'page': page,
+                                              'paginator': paginator,
+                                              'empty': empty, })
 
 
 @login_required

@@ -44,9 +44,11 @@
                         </div>
                     </li>
                     {% endfor %}
+                    {% if author.2 > 0  %}
                     <li class="card-user__item">
                         <a href="{% url 'user_recipe' user_id=author.0.id %}" class="card-user__link link">Еще {{ author.2 }} рецептов...</a>
                     </li>
+                    {% endif %}
                 </ul>
             </div>
             <div class="card-user__footer">

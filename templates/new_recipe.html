@@ -76,7 +76,7 @@
                 </div>
             </div>
             <div class="form__group">
-                <label for="id_time" class="form__label">Время приготовления{{ form.done_time.value }}</label>
+                <label for="id_time" class="form__label">Время приготовления</label>
                 <div class="form__field-group form__field-group_time">
                     <input type="text" id="id_time" name="done_time" class="form__input"  value="{% if form.done_time.value == None %} {% else %} {{ form.done_time.value }} {% endif %}">
                     <label for="id_time" class="form__label">минут</label>
