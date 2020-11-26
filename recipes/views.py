@@ -60,7 +60,7 @@ def new_recipe(request):
         ingredients = []
         tags = []
         for i in Recipe.TagChoices.choices:
-            if i[1] in request.POST:
+            if str(i[0]) in request.POST:
                 tags.append(i[0])
         for item in request.POST:
             ingredient = []
@@ -110,7 +110,7 @@ def recipe_edit(request, recipe_id):
     if request.method == 'POST':
         tags = []
         for i in Recipe.TagChoices.choices:
-            if i[1] in request.POST:
+            if str(i[0]) in request.POST:
                 tags.append(i[0])
         new_ingredients = []
         for item in request.POST:
