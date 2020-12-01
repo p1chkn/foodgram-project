@@ -6,8 +6,9 @@ from users.models import User
 
 
 class Ingredient(models.Model):
-    title = models.CharField(max_length=200)
-    dimension = models.CharField(max_length=20)
+    title = models.CharField(max_length=200, verbose_name='Название')
+    dimension = models.CharField(max_length=20,
+                                 verbose_name='Единица измерения')
 
     def __str__(self):
         return self.title
@@ -22,12 +23,15 @@ class Recipe(models.Model):
         LUNCH = 2, _('обед')
         DINNER = 3, _('ужин')
     author = models.ForeignKey(User, on_delete=models.CASCADE,
-                               related_name='recipe')
-    title = models.CharField(max_length=200)
-    image = models.ImageField(upload_to='recipe_image/')
-    description = models.TextField()
-    tag = MultiSelectField(choices=TagChoices.choices, null=True)
-    done_time = models.IntegerField()
+                               related_name='recipe',
+                               verbose_name='Автор')
+    title = models.CharField(max_length=200, verbose_name='Название')
+    image = models.ImageField(upload_to='recipe_image/',
+                              verbose_name='Изображение')
+    description = models.TextField(verbose_name='Описание')
+    tag = MultiSelectField(choices=TagChoices.choices, null=True,
+                           verbose_name='Тэг')
+    done_time = models.IntegerField(verbose_name='Время приготовления')
 
     def __str__(self):
         return self.title
@@ -37,10 +41,12 @@ class Recipe(models.Model):
 
 
 class IngredientsInRecipe(models.Model):
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
+                               verbose_name='Рецепт')
     ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT,
-                                   related_name='ingredients_in_recipe')
-    amount = models.IntegerField()
+                                   related_name='ingredients_in_recipe',
+                                   verbose_name='Ингредиент')
+    amount = models.IntegerField(verbose_name='Количество')
 
     def __str__(self):
         return self.ingredient.title
