@@ -22,7 +22,11 @@ docke-compose up
 ```
 sudo docke-compose up
 ```
-если есть какие-то ошибки с доступом.
+если есть какие-то ошибки с доступом. Чтобы настроить запуск docker без root прав, можно воспользоваться этим:
+
+https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user
+
+Так же можно использовать флаг -d, чтобы запустить docker-compose в фоновом режиме.
 
 
 Все! проект расвернулся на вашем комьютере, можете наслаждаться!
