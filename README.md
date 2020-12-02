@@ -19,11 +19,11 @@ https://www.docker.com/
 После скачивания проекта и установки docker-compose, нужно войти в терминал и перейти в главную директорию проекта, после этого запустить:
 
 ```
-docke-compose up
+docker-compose up
 ```
 или 
 ```
-sudo docke-compose up
+sudo docker-compose up
 ```
 если есть какие-то ошибки с доступом. Чтобы настроить запуск docker без root прав, можно воспользоваться этим:
 
