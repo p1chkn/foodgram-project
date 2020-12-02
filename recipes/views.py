@@ -59,6 +59,7 @@ def new_recipe(request):
         form = RecipeForm(request.POST or None, files=request.FILES or None)
         ingredients = []
         tags = []
+        errors = []
         for i in Recipe.TagChoices.choices:
             if str(i[0]) in request.POST:
                 tags.append(i[0])
@@ -71,7 +72,11 @@ def new_recipe(request):
                 ingredient.append(request.POST.get(f'valueIngredient_{i}', 0))
                 ingredient.append(request.POST.get(f'unitsIngredient_{i}', ''))
                 ingredients.append(ingredient)
-        if form.is_valid():
+        if not tags:
+            errors.append('tag')
+        if not ingredients:
+            errors.append('ingredient')
+        if form.is_valid() and errors == []:
             recipe = form.save(commit=False)
             recipe.author = request.user
             recipe.tag = tuple(tags)
@@ -84,7 +89,8 @@ def new_recipe(request):
             return redirect('index')
         return render(request, 'new_recipe.html', {'form': form,
                                                    'ingredients': ingredients,
-                                                   'tags': tags})
+                                                   'tags': tags,
+                                                   'errors': errors})
     form = RecipeForm()
     return render(request, 'new_recipe.html', {'form': form})
 
@@ -109,6 +115,7 @@ def recipe_edit(request, recipe_id):
                       instance=edited_recipe)
     if request.method == 'POST':
         tags = []
+        errors = []
         for i in Recipe.TagChoices.choices:
             if str(i[0]) in request.POST:
                 tags.append(i[0])
@@ -122,7 +129,11 @@ def recipe_edit(request, recipe_id):
                 ingredient.append(request.POST.get(f'valueIngredient_{i}', 0))
                 ingredient.append(request.POST.get(f'unitsIngredient_{i}', ''))
                 new_ingredients.append(tuple(ingredient))
-        if form.is_valid():
+        if not tags:
+            errors.append('tag')
+        if not new_ingredients:
+            errors.append('ingredient')
+        if form.is_valid() and errors == []:
             recipe = form.save(commit=False)
             recipe.author = request.user
             recipe.tag = tuple(tags)
@@ -146,7 +157,8 @@ def recipe_edit(request, recipe_id):
         return render(request, 'new_recipe.html', {'form': form,
                                                    'ingredients': ingredients,
                                                    'tags': tags,
-                                                   'editing': editing})
+                                                   'editing': editing,
+                                                   'errors': errors})
     return render(request, 'new_recipe.html', {'form': form,
                                                'ingredients': ingredients,
                                                'tags': tags,
