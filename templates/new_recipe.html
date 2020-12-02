@@ -46,7 +46,9 @@
                             <label for="id_dinner" class="tags__label">Ужин</label>
                         </div>
                     </div>
-                    <span class="form__error"></span>
+                    {% if 'tag' in errors %}
+                    <span class="form__error">Нужно добавить хотя бы один тэг!</span>
+                    {% endif %}
                 </div>
             </div>
             <div class="form__group">
@@ -72,7 +74,9 @@
                     {% endfor %}
                     </div>
                     <span class="form__ingredient-link" id="addIng"> Добавить ингредиент</span>
-                    <span class="form__error">{{ form.ingredients.errors }}</span>
+                    {% if 'ingredient' in errors %}
+                    <span class="form__error">Нужно добавить хотя бы один ингредиент!</span>
+                    {% endif %}
                 </div>
             </div>
             <div class="form__group">
