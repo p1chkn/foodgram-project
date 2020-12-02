@@ -170,8 +170,11 @@ def recipe_view(request, recipe_id):
     ingredients = IngredientsInRecipe.objects.filter(
         recipe=recipe).select_related('ingredient').all()
     purchases_id, favorites_id = get_purchases_and_favorites(request)
-    subscriptions_id = Follow.objects.filter(
-        user=request.user).values_list('author__id', flat=True)
+    if request.user.is_authenticated:
+        subscriptions_id = Follow.objects.filter(
+            user=request.user).values_list('author__id', flat=True)
+    else:
+        subscriptions_id = []
     return render(request, 'single_page.html', {'recipe': recipe,
                                                 'ingredients': ingredients,
                                                 'purchases_id': purchases_id,
